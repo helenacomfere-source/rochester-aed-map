@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Find an AED — Rochester AED Map</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <meta name="description" content="Find verified AED locations across the Rochester community.">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="assets/js/reveal.js"></script>
+</head>
+<body>
+
+<div class="emergency-bar">
+  In an emergency, call <a href="tel:911">911</a> first. Send someone else to get the AED.
+</div>
+
+<header class="site-header">
+  <a class="brand" href="index.html" aria-label="Rochester AED Map — go to home page">
+    <img class="brand-logo" src="assets/img/logo.png" alt="">
+    <span class="brand-text">
+      <span class="brand-name">Rochester AED Map</span>
+      <span class="brand-sub">in partnership with AEDs for Athletes</span>
+    </span>
+  </a>
+  <nav class="site-nav">
+    <a href="index.html">Home</a>
+    <a href="find.html" aria-current="page">Find an AED</a>
+    <a href="info.html">What to do</a>
+    <a href="submit.html">Add an AED</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<div class="warning-bar" id="example-warning" hidden>
+  <strong>Development mode:</strong> this map contains example placeholder records.
+  They are not real AEDs and must be removed before launch.
+</div>
+
+<main class="map-layout">
+  <aside class="sidebar">
+    <div class="search-box">
+      <form id="search-form">
+        <div class="search-row">
+          <input id="search-input" type="search" placeholder="ZIP code, address, or place" autocomplete="off" aria-label="Search by ZIP code or address">
+          <button class="btn" type="submit">Search</button>
+        </div>
+      </form>
+      <button class="btn btn-secondary btn-locate" id="locate-btn" type="button">Use my location</button>
+      <p class="search-status" id="search-status"></p>
+    </div>
+
+    <div class="results-head" id="results-head">Loading…</div>
+    <div class="results" id="results"></div>
+
+    <div class="legend">
+      <h4>What the colors mean</h4>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--fresh)"></span> Verified in the last 6 months</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--aging)"></span> Verified, recheck due</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--stale)"></span> Unconfirmed or out of date</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--reported)"></span> Community reported, not yet checked</div>
+    </div>
+  </aside>
+
+  <div id="map"></div>
+</main>
+
+<footer class="site-footer">
+  <p class="footer-strong">
+    Always call 911 first. This site is not a substitute for emergency services,
+    medical advice, or CPR and AED training.
+  </p>
+  <p>
+    An independent community project for Rochester, Minnesota, built in partnership with
+    <a href="https://www.aedsforathletes.com/" target="_blank" rel="noopener"><strong>AEDs for Athletes</strong></a>
+    — a youth-led 501(c)(3) fostering a culture of preparedness by bringing CPR and AED
+    readiness into every community. This map is not operated by the organization.
+  </p>
+  <p>
+    AED locations are gathered from community submissions and public sources and may be
+    inaccurate or out of date. We cannot guarantee any AED is present or in working
+    order. <a href="about.html#disclaimer">Read the full disclaimer</a>.
+  </p>
+  <p class="footer-fine">
+    Built by Helena Comfere, a member of AEDs for Athletes Rochester.
+    Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>
+    contributors (ODbL).
+  </p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/map.js"></script>
+</body>
+</html>

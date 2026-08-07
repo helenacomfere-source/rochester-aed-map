@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "updated": "2026-07-29",
+  "notes": "Real AED records only. Every entry must be traceable to either an outside source (source: 'osm') or a community report (source: 'community'). Only promote a record to status 'verified' after a volunteer has physically confirmed the AED is present, accessible, and in service — and set last_verified to the date of that visit.",
+  "aeds": [
+    {
+      "id": "osm-8188965443",
+      "name": "Unnamed AED (imported from OpenStreetMap)",
+      "lat": 44.0658551,
+      "lon": -92.4895792,
+      "address": "",
+      "location_detail": "Indoors, level 1. No further detail recorded in OpenStreetMap.",
+      "access": "unknown",
+      "indoor": true,
+      "hours": "",
+      "status": "unverified",
+      "last_verified": null,
+      "verified_by": null,
+      "source": "osm",
+      "osm_id": 8188965443,
+      "notes": "The only AED mapped in the Rochester area in OpenStreetMap as of 2026-07-28. Needs field verification."
+    },
+    {
+      "id": "ets-performance-broadway",
+      "name": "ETS Performance",
+      "lat": 44.0600100,
+      "lon": -92.4511400,
+      "address": "Chateau Center, N Broadway Ave, Rochester, MN 55906",
+      "location_detail": "Inside, on the right-hand wall behind the front desk.",
+      "access": "restricted",
+      "indoor": true,
+      "hours": "Mon–Sat, 6am–9pm. Closed Sunday.",
+      "status": "verified",
+      "last_verified": "2026-07-29",
+      "verified_by": "AEDs for Athletes",
+      "source": "community",
+      "osm_id": null,
+      "notes": "AED presence confirmed in person on 2026-07-29. Located next to Chip Shots in Chateau Center. Pin placed by hand from the map; the geocoder had put it on the Subway drive-through access road. Hours are taken from the business website, not read off the door — worth confirming on the next visit, since posted hours change more often than websites do."
+    }
+  ]
+}

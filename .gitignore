@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Backups written by tools/add_aed.py before it changes the data file
+*.bak
+*.tmp
+
+# Build artifact — rebuilt on demand, see DEPLOY.md
+rochester-aed-map.zip
+dist/
+
+# Original logo source. logo.png (transparent) is the one the site uses.
+assets/img/logo.jpg

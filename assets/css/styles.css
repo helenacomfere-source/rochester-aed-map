@@ -1,0 +1,720 @@
+:root {
+  /* Brand */
+  --red: #c8102e;
+  --red-dark: #9b0c23;
+  --red-tint: #fdf2f4;
+
+  /* Supporting accents. Used for decoration and section variety only —
+     never to signal how trustworthy an AED record is. */
+  --teal: #0f7c86;
+  --teal-tint: #edf9fa;
+  --amber: #b26a00;
+  --amber-tint: #fff8ec;
+  --navy: #16233c;
+  --navy-2: #24345a;
+
+  --ink: #1a1d23;
+  --muted: #5c6470;
+  --line: #dde1e7;
+  --bg: #ffffff;
+  --bg-soft: #f5f7fa;
+
+  /* Status colors carry meaning on the map and in the legend. Changing these
+     changes what the site is telling people, so treat them as fixed. */
+  --fresh: #1a7f4b;
+  --aging: #b26a00;
+  --stale: #8a8f98;
+  --reported: #2563c9;
+  --example: #c8102e;
+
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 4px 12px rgba(0, 0, 0, .06);
+  --shadow-lg: 0 6px 16px rgba(22, 35, 60, .1), 0 16px 40px rgba(22, 35, 60, .08);
+}
+
+html { scroll-behavior: smooth; }
+
+/* ---------- scroll reveal ----------
+   The hidden state is only applied when JS is running (html.js-reveal), so if
+   the script fails the page still shows everything. */
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.js-reveal .reveal-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity .6s cubic-bezier(.16, 1, .3, 1),
+              transform .6s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Anyone who has asked their system to reduce motion gets the content with no
+   movement at all — this audience includes people who find motion unpleasant. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js-reveal .reveal { opacity: 1; transform: none; }
+  .js-reveal .reveal-in { transition: none; }
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.55;
+}
+
+/* Large tap targets and readable type: a chunk of the audience is older
+   adults, and everyone using this is stressed. */
+button, input, select, textarea { font: inherit; }
+a { color: var(--red-dark); }
+
+/* ---------- header ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: .75rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, .88);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  transition: box-shadow .25s ease, background .25s ease;
+}
+/* scrolled class is added by reveal.js once the page moves off the top */
+.site-header.scrolled {
+  box-shadow: 0 1px 0 var(--line), 0 4px 20px rgba(22, 35, 60, .07);
+  background: rgba(255, 255, 255, .96);
+}
+
+/* The map page fills the viewport, so a sticky header would eat into it. */
+body:has(.map-layout) .site-header { position: static; }
+/* Clicking the logo or the name goes home from any page. The padding and the
+   matching negative margin widen the clickable area without moving anything. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: .4rem .6rem;
+  margin: -.4rem -.6rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+.brand:hover { background: var(--red-tint); color: var(--red-dark); }
+.brand:active { background: #fbe6ea; }
+.brand:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+  background: var(--red-tint);
+}
+/* Two-line lockup: the map's own name, with the partnership underneath so the
+   relationship is visible on every page rather than only in the footer. */
+.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-name { font-weight: 700; font-size: 1.05rem; }
+.brand-sub {
+  font-weight: 500;
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .01em;
+}
+.brand:hover .brand-sub { color: var(--red-dark); }
+
+.brand:hover .brand-logo { transform: scale(1.06); }
+.brand-logo { transition: transform .2s cubic-bezier(.16, 1, .3, 1); }
+
+/* Clicking the logo from an inner page plays one heartbeat before going home.
+   The `beating` class is added by reveal.js, which then waits for the animation
+   to finish. Timing here and HEARTBEAT_MS there describe the same beat — if you
+   change the duration below, change it there too. */
+.brand.beating .brand-logo {
+  animation: brand-heartbeat .7s cubic-bezier(.22, 1, .36, 1);
+}
+.brand.beating { background: var(--red-tint); color: var(--red-dark); }
+
+/* lub-dub: a strong beat, a smaller second one, then rest. */
+@keyframes brand-heartbeat {
+  0%   { transform: scale(1);    filter: none; }
+  14%  { transform: scale(1.28); filter: drop-shadow(0 0 6px rgba(200, 16, 46,.45)); }
+  28%  { transform: scale(1); }
+  42%  { transform: scale(1.16); filter: drop-shadow(0 0 4px rgba(200, 16, 46,.3)); }
+  58%  { transform: scale(1);    filter: none; }
+  100% { transform: scale(1);    filter: none; }
+}
+/* logo.png has a transparent background (generated from the original JPEG by
+   flood-filling the outer white; the enclosed lightning bolt stays white).
+   It can sit on any background, light or dark. */
+.brand-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+  flex: none;
+}
+
+.hero-logo {
+  height: 96px;
+  width: auto;
+  margin: 0 auto 1.5rem;
+  display: block;
+}
+.site-nav { display: flex; gap: 1.1rem; margin-left: auto; flex-wrap: wrap; }
+.site-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  padding: .35rem 0;
+  border-bottom: 2px solid transparent;
+}
+.site-nav a:hover { color: var(--ink); }
+.site-nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--red); }
+
+/* ---------- emergency banner ---------- */
+.emergency-bar {
+  background: linear-gradient(90deg, var(--red-dark), var(--red) 45%, #e0364c);
+  color: #fff;
+  text-align: center;
+  padding: .55rem 1rem;
+  font-weight: 600;
+  font-size: .95rem;
+  letter-spacing: .01em;
+}
+.emergency-bar a { color: #fff; }
+
+.warning-bar {
+  background: #fff4e5;
+  border-bottom: 1px solid #f0c88a;
+  color: #7a4b00;
+  padding: .6rem 1.25rem;
+  font-size: .9rem;
+}
+
+/* ---------- map layout ---------- */
+.map-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: calc(100vh - 108px);
+  min-height: 460px;
+}
+#map { height: 100%; width: 100%; }
+
+.sidebar {
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+.search-box { padding: 1rem; border-bottom: 1px solid var(--line); }
+.search-row { display: flex; gap: .5rem; }
+.search-box input {
+  flex: 1;
+  padding: .6rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  min-width: 0;
+}
+.search-box input:focus { outline: 2px solid var(--red); outline-offset: 1px; }
+
+.btn {
+  display: inline-block;
+  padding: .6rem .9rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #e01e3c, var(--red));
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(155, 12, 35, .25);
+  transition: transform .18s cubic-bezier(.16, 1, .3, 1),
+              box-shadow .18s ease, filter .18s ease;
+}
+.btn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(200, 16, 46, .3);
+}
+.btn:active { transform: translateY(0); }
+.btn-secondary { background: var(--bg-soft); color: var(--ink); border: 1px solid var(--line); }
+.btn-secondary:hover { background: #e9edf3; }
+.btn-locate { width: 100%; margin-top: .5rem; }
+
+.search-status { font-size: .85rem; color: var(--muted); margin-top: .5rem; min-height: 1.2em; }
+
+.results { overflow-y: auto; flex: 1; }
+.results-head {
+  padding: .7rem 1rem;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+
+.aed-card {
+  padding: .85rem 1rem;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  background: none;
+  border-left: 0; border-right: 0; border-top: 0;
+  width: 100%;
+  text-align: left;
+  display: block;
+}
+.aed-card:hover { background: var(--bg-soft); }
+.aed-card h3 { margin: 0 0 .25rem; font-size: .98rem; }
+.aed-card p { margin: .15rem 0; font-size: .87rem; color: var(--muted); }
+.aed-dist { font-variant-numeric: tabular-nums; }
+
+/* ---------- trust badges ---------- */
+.badge {
+  display: inline-block;
+  padding: .12rem .5rem;
+  border-radius: 999px;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  color: #fff;
+  margin-bottom: .3rem;
+}
+.badge-fresh { background: var(--fresh); }
+.badge-aging { background: var(--aging); }
+.badge-stale { background: var(--stale); }
+.badge-reported { background: var(--reported); }
+.badge-unverified { background: var(--stale); }
+.badge-example { background: var(--example); }
+
+/* Map pins mirror the badge colors so the legend reads the same everywhere. */
+.pin {
+  width: 22px; height: 22px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4);
+}
+.pin-fresh { background: var(--fresh); }
+.pin-aging { background: var(--aging); }
+.pin-stale { background: var(--stale); }
+.pin-reported { background: var(--reported); }
+.pin-unverified { background: var(--stale); }
+.pin-example { background: var(--example); }
+
+.legend {
+  padding: .8rem 1rem;
+  border-top: 1px solid var(--line);
+  font-size: .82rem;
+  background: var(--bg-soft);
+}
+.legend h4 { margin: 0 0 .45rem; font-size: .78rem; text-transform: uppercase; color: var(--muted); letter-spacing: .04em; }
+.legend-item { display: flex; align-items: center; gap: .45rem; margin: .22rem 0; }
+.legend-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+
+/* ---------- popup ---------- */
+.popup h3 { margin: 0 0 .3rem; font-size: 1rem; }
+.popup p { margin: .2rem 0; font-size: .87rem; }
+.popup .detail { color: var(--muted); }
+.popup-actions { margin-top: .6rem; display: flex; gap: .4rem; flex-wrap: wrap; }
+.popup-actions a {
+  font-size: .82rem;
+  padding: .35rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+/* ---------- content pages ---------- */
+.page { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+.page h1 {
+  font-size: 2.1rem;
+  margin: 0 0 .4rem;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+}
+/* Short accent rule under each section heading. */
+.page h2 {
+  font-size: 1.3rem;
+  margin: 2.4rem 0 .7rem;
+  padding-bottom: .45rem;
+  position: relative;
+}
+.page h2::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 2.5rem; height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--red), var(--amber));
+}
+.page h3 { color: var(--red-dark); }
+.lede { font-size: 1.12rem; color: var(--muted); margin: 0 0 1.5rem; }
+
+.callout {
+  background: linear-gradient(135deg, var(--red-tint), #fff);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--red);
+  padding: 1.15rem 1.3rem;
+  border-radius: 0 12px 12px 0;
+  margin: 1.75rem 0;
+}
+.callout h3 { margin: 0 0 .4rem; font-size: 1rem; }
+.callout p:last-child { margin-bottom: 0; }
+
+.steps { counter-reset: step; list-style: none; padding: 0; }
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 3rem;
+  margin-bottom: 1.4rem;
+  min-height: 2rem;
+}
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0; top: 0;
+  width: 2rem; height: 2rem;
+  background: var(--red);
+  color: #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+.steps strong { display: block; }
+
+/* ---------- form ---------- */
+.field { margin-bottom: 1.1rem; }
+.field label { display: block; font-weight: 600; margin-bottom: .3rem; font-size: .93rem; }
+.field .hint { font-size: .84rem; color: var(--muted); margin: 0 0 .35rem; }
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: .6rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.field textarea { min-height: 90px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--red); outline-offset: 1px; }
+.required { color: var(--red); }
+
+#pick-map { height: 300px; border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: .5rem; }
+
+.form-result {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  display: none;
+}
+.form-result-ok {
+  background: linear-gradient(135deg, #eef9f1, #fff);
+  border-color: #a8d8bb;
+  border-left: 4px solid var(--fresh);
+}
+.form-result-ok h3 { color: #14653c; margin-top: 0; }
+.form-result-error {
+  background: linear-gradient(135deg, var(--red-tint), #fff);
+  border-left: 4px solid var(--red);
+}
+.form-result-error h3 { color: var(--red-dark); margin-top: 0; }
+
+.form-result pre {
+  overflow-x: auto;
+  background: #fff;
+  padding: .75rem;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  font-size: .82rem;
+}
+
+/* ---------- homepage ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(200, 16, 46, .10), transparent 70%),
+    linear-gradient(180deg, var(--red-tint) 0%, #ffffff 85%);
+  border-bottom: 1px solid var(--line);
+  padding: 4rem 1.25rem 3.5rem;
+}
+/* Thin brand stripe across the top of the page. */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--red), #e0574f, var(--amber), var(--teal));
+}
+.hero-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.15;
+  margin: 0 0 1rem;
+  letter-spacing: -.02em;
+}
+.hero-lede {
+  font-size: 1.15rem;
+  color: var(--muted);
+  margin: 0 auto 2rem;
+  max-width: 34rem;
+}
+
+.hero-search {
+  display: flex;
+  gap: .5rem;
+  max-width: 30rem;
+  margin: 0 auto;
+}
+.hero-search input {
+  flex: 1;
+  min-width: 0;
+  padding: .8rem .9rem;
+  font-size: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+}
+.hero-search input:focus { outline: 2px solid var(--red); outline-offset: 1px; }
+.hero-search .btn { padding: .8rem 1.3rem; white-space: nowrap; }
+.hero-alt { font-size: .9rem; color: var(--muted); margin: .9rem 0 0; }
+
+/* Three destinations. Whole card is the link — a bigger target than a text
+   link, which matters for older users and for phones. */
+.cards {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1.25rem;
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--bg);
+  overflow: hidden;
+  transition: transform .25s cubic-bezier(.16, 1, .3, 1),
+              box-shadow .25s ease,
+              border-color .25s ease;
+}
+/* Each card carries its own accent, set per-card below. */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--accent, var(--red));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s cubic-bezier(.16, 1, .3, 1);
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent, var(--red));
+}
+.card:hover::before { transform: scaleX(1); }
+
+.card-find   { --accent: var(--red);  background: linear-gradient(180deg, var(--red-tint), #fff 60%); }
+.card-add    { --accent: var(--teal); background: linear-gradient(180deg, var(--teal-tint), #fff 60%); }
+.card-about  { --accent: var(--amber); background: linear-gradient(180deg, var(--amber-tint), #fff 60%); }
+
+.card-icon {
+  display: grid;
+  place-items: center;
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+  transition: transform .25s cubic-bezier(.16, 1, .3, 1);
+}
+.card:hover .card-icon { transform: scale(1.08) rotate(-4deg); }
+.card .card-link { color: var(--accent, var(--red-dark)); }
+.card h2 { margin: 0 0 .5rem; font-size: 1.2rem; }
+.card p { margin: 0 0 1.25rem; color: var(--muted); font-size: .94rem; flex: 1; }
+.card-link { color: var(--red-dark); font-weight: 600; font-size: .92rem; }
+
+.stat-band {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 0%, rgba(200, 16, 46, .28), transparent 65%),
+    linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+  color: #fff;
+  padding: 4rem 1.25rem;
+  text-align: center;
+}
+.stat-inner { max-width: 620px; margin: 0 auto; position: relative; }
+.stat-number {
+  font-size: clamp(3.5rem, 12vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1;
+  margin: 0 0 .5rem;
+  background: linear-gradient(180deg, #ff5f6d, var(--red));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.stat-label { font-size: 1.2rem; margin: 0 0 .75rem; }
+.stat-breakdown {
+  font-size: .95rem;
+  color: #d6dbe4;
+  margin: 0 0 1.25rem;
+}
+.stat-breakdown:empty { display: none; }
+.stat-note { font-size: .93rem; color: #b9c0cc; margin: 0; }
+.stat-note a { color: #fff; }
+
+.emergency-section {
+  padding: 4rem 1.25rem;
+  background: linear-gradient(180deg, var(--red-tint), #fff);
+  border-top: 1px solid var(--line);
+}
+.emergency-inner {
+  max-width: 620px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 2rem 2rem 2.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--red);
+  box-shadow: var(--shadow);
+}
+.emergency-inner h2 { font-size: 1.5rem; margin: 0 0 1.25rem; }
+.quick-steps { padding-left: 1.3rem; margin: 0 0 1.5rem; }
+
+.contact-email {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: .5rem 0 1rem;
+}
+.contact-email a { word-break: break-word; }
+
+/* Inline citation under a health or safety claim. Deliberately quiet — present
+   and checkable, without competing with the guidance itself. */
+.source {
+  display: block;
+  margin-top: .45rem;
+  font-size: .82rem;
+  color: var(--muted);
+}
+.source a { color: var(--muted); text-decoration: underline; }
+.source a:hover { color: var(--red-dark); }
+
+.steps .source { font-weight: 400; }
+
+.org-tagline {
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--red-dark);
+  border-left: 3px solid var(--red);
+  padding-left: 1rem;
+  margin: 1.25rem 0;
+}
+
+.contact-form {
+  background: linear-gradient(180deg, var(--bg-soft), #fff);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--red);
+  border-radius: 14px;
+  padding: 1.5rem 1.5rem 1.75rem;
+  margin: 1.25rem 0 1.5rem;
+}
+.contact-form .field:last-of-type { margin-bottom: 1.25rem; }
+
+/* Off-screen rather than display:none — bots skip hidden inputs, but happily
+   fill anything that is merely positioned out of view. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-social { margin: .5rem 0 1rem; }
+.contact-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  background: var(--bg);
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+.contact-social a:hover {
+  border-color: var(--red);
+  background: var(--red-tint);
+  transform: translateY(-1px);
+}
+
+.cpr-note {
+  background: var(--teal-tint);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 10px 10px 0;
+  padding: .95rem 1.1rem;
+  margin: 0 0 1.75rem;
+  font-size: .93rem;
+}
+.quick-steps li { margin-bottom: .7rem; }
+.quick-steps li::marker { color: var(--red); font-weight: 700; }
+
+.cards-section {
+  padding: 4rem 1.25rem;
+  background: linear-gradient(180deg, #fff, var(--bg-soft));
+}
+
+.site-footer {
+  border-top: 3px solid var(--red);
+  background: linear-gradient(180deg, #fff, var(--bg-soft));
+  padding: 2rem 1.25rem 2.5rem;
+  font-size: .85rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.7;
+}
+.site-footer p { max-width: 620px; margin: 0 auto .75rem; }
+.site-footer p:last-child { margin-bottom: 0; }
+
+/* The 911 line is the one piece of footer text that must not be skimmed past. */
+.footer-strong {
+  color: var(--red-dark);
+  font-weight: 700;
+  font-size: .95rem;
+}
+.footer-fine { font-size: .78rem; opacity: .85; }
+
+/* Warning variant of the callout, for the disclaimer. */
+.callout-warn {
+  background: linear-gradient(135deg, var(--amber-tint), #fff);
+  border-left-color: var(--amber);
+}
+.callout-warn h3 { color: #8a5200; }
+
+@media (max-width: 760px) {
+  .map-layout { grid-template-columns: 1fr; grid-template-rows: auto 55vh; height: auto; }
+  .sidebar { border-right: 0; border-bottom: 1px solid var(--line); max-height: 62vh; }
+  .site-header { flex-wrap: wrap; gap: .6rem 1rem; }
+  .site-nav { margin-left: 0; width: 100%; }
+}
