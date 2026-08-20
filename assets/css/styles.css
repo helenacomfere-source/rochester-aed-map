@@ -143,15 +143,22 @@ body:has(.map-layout) .site-header { position: static; }
 }
 
 /* lub-dub: a strong beat, a smaller second one, then a rest before the next.
-   The long tail from 58% to 100% is what makes it read as a pulse rather than
-   a throb. */
+   The long tail from 42% to 100% is what makes it read as a pulse rather than
+   a throb.
+
+   Deliberately transform-only. An earlier version also animated `filter:
+   drop-shadow(...)` for a glow, which worked in isolation but never repainted
+   inside the header — .site-header has `backdrop-filter`, and a filtered child
+   of a backdrop-filtered parent is a known compositing bug in WebKit and Blink.
+   Transforms composite on their own layer and are unaffected. Do not add a
+   filter here. */
 @keyframes brand-heartbeat {
-  0%   { transform: scale(1);    filter: none; }
-  10%  { transform: scale(1.22); filter: drop-shadow(0 0 6px rgba(200, 16, 46, .45)); }
+  0%   { transform: scale(1); }
+  10%  { transform: scale(1.24); }
   20%  { transform: scale(1); }
-  30%  { transform: scale(1.13); filter: drop-shadow(0 0 4px rgba(200, 16, 46, .3)); }
-  42%  { transform: scale(1);    filter: none; }
-  100% { transform: scale(1);    filter: none; }
+  30%  { transform: scale(1.14); }
+  42%  { transform: scale(1); }
+  100% { transform: scale(1); }
 }
 /* logo.png has a transparent background (generated from the original JPEG by
    flood-filling the outer white; the enclosed lightning bolt stays white).

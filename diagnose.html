@@ -23,13 +23,29 @@
   <p>Hover the logo below, then read the results. They update live.</p>
 
   <div class="box">
+    <p style="margin-top:0"><b>A — bare logo, no header around it</b>
+       (this one already worked)</p>
     <a class="brand" href="#" style="display:inline-flex">
       <img class="brand-logo" src="assets/img/logo.png" alt="">
       <span class="brand-text">
         <span class="brand-name">Hover me</span>
-        <span class="brand-sub">the header logo lockup</span>
+        <span class="brand-sub">no backdrop-filter parent</span>
       </span>
     </a>
+  </div>
+
+  <div class="box" style="padding:0;overflow:hidden">
+    <p style="padding:1.25rem 1.25rem 0;margin:0"><b>B — inside the real header</b>
+       (exact copy of the site header, backdrop-filter and all)</p>
+    <header class="site-header" style="position:static">
+      <a class="brand" href="#">
+        <img class="brand-logo" src="assets/img/logo.png" alt="">
+        <span class="brand-text">
+          <span class="brand-name">Hover me too</span>
+          <span class="brand-sub">inside .site-header</span>
+        </span>
+      </a>
+    </header>
   </div>
 
   <div class="box">
