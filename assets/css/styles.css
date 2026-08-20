@@ -82,9 +82,11 @@ a { color: var(--red-dark); }
   gap: 1.5rem;
   padding: .75rem 1.25rem;
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, .88);
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  /* No backdrop-filter here on purpose. Combined with position:sticky it
+     promotes the header to a compositing layer that suppresses repaints of its
+     children — which silently stopped the logo heartbeat from ever drawing.
+     A near-opaque background reads almost identically and has no such cost. */
+  background: rgba(255, 255, 255, .97);
   transition: box-shadow .25s ease, background .25s ease;
 }
 /* scrolled class is added by reveal.js once the page moves off the top */
@@ -168,6 +170,12 @@ body:has(.map-layout) .site-header { position: static; }
   width: auto;
   display: block;
   flex: none;
+  /* Force this image onto its own compositing layer. The header is
+     position:sticky with a backdrop-filter, which promotes it to a layer whose
+     children's repaints get suppressed — the heartbeat animation runs but never
+     draws. Promoting the logo itself makes it repaint independently. Without
+     this the animation is silently invisible in the header only. */
+  will-change: transform;
 }
 
 .hero-logo {
