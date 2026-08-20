@@ -144,6 +144,17 @@ body:has(.map-layout) .site-header { position: static; }
   animation: brand-heartbeat 1.3s cubic-bezier(.22, 1, .36, 1) infinite;
 }
 
+/* Three beats when the homepage loads, then still. The class is added and
+   removed by reveal.js rather than being permanent, so hovering afterwards
+   still starts a fresh animation — a finished animation of the same name will
+   not restart on its own. Slightly quicker than the hover beat so the rests
+   are shorter and it reads as a greeting rather than a wait. */
+.hero-logo.intro-beat {
+  /* name, duration, easing, delay, iterations. The delay lets the hero's
+     fade-in finish first, so the logo is fully visible when it starts. */
+  animation: brand-heartbeat 1s cubic-bezier(.22, 1, .36, 1) .45s 3;
+}
+
 /* lub-dub: a strong beat, a smaller second one, then a rest before the next.
    The long tail from 42% to 100% is what makes it read as a pulse rather than
    a throb.
