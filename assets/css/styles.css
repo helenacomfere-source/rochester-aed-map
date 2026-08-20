@@ -133,8 +133,15 @@ body:has(.map-layout) .site-header { position: static; }
 }
 .brand:hover .brand-sub { color: var(--red-dark); }
 
-/* Two beats when the homepage loads, then still. This is the only place the
-   heart animates — there is no hover beat.
+/* Header logo: beats for as long as the pointer (or keyboard focus) stays on it.
+   Deliberately not applied to .hero-logo — that one has its own intro below and
+   should stay still once it has finished. */
+.brand:hover .brand-logo,
+.brand:focus-visible .brand-logo {
+  animation: brand-heartbeat 1.3s cubic-bezier(.22, 1, .36, 1) infinite;
+}
+
+/* Hero logo: two beats when the homepage loads, then still. No hover beat.
 
    Shorthand order: name, duration, easing, delay, iterations. The delay lets
    the hero's fade-in settle first, since the logo is part of the scroll-reveal
@@ -169,6 +176,10 @@ body:has(.map-layout) .site-header { position: static; }
   width: auto;
   display: block;
   flex: none;
+  /* Own compositing layer. The header is position:sticky, and sticky parents
+     can suppress a child's repaints — which is what made this animation run
+     without ever drawing. Cheap insurance for one small image. */
+  will-change: transform;
 }
 
 .hero-logo {
