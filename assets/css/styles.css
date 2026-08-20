@@ -133,26 +133,14 @@ body:has(.map-layout) .site-header { position: static; }
 }
 .brand:hover .brand-sub { color: var(--red-dark); }
 
-.brand-logo { transition: transform .2s cubic-bezier(.16, 1, .3, 1); }
+/* Two beats when the homepage loads, then still. This is the only place the
+   heart animates — there is no hover beat.
 
-/* Hovering the logo makes the heart beat, and keeps beating while you stay on
-   it. Pure decoration — nothing depends on it, and it stops the moment the
-   pointer leaves. */
-.brand:hover .brand-logo,
-.brand:focus-visible .brand-logo,
-.hero-logo:hover {
-  animation: brand-heartbeat 1.3s cubic-bezier(.22, 1, .36, 1) infinite;
-}
-
-/* Three beats when the homepage loads, then still. The class is added and
-   removed by reveal.js rather than being permanent, so hovering afterwards
-   still starts a fresh animation — a finished animation of the same name will
-   not restart on its own. Slightly quicker than the hover beat so the rests
-   are shorter and it reads as a greeting rather than a wait. */
-.hero-logo.intro-beat {
-  /* name, duration, easing, delay, iterations. The delay lets the hero's
-     fade-in finish first, so the logo is fully visible when it starts. */
-  animation: brand-heartbeat 1s cubic-bezier(.22, 1, .36, 1) .45s 3;
+   Shorthand order: name, duration, easing, delay, iterations. The delay lets
+   the hero's fade-in settle first, since the logo is part of the scroll-reveal
+   group and would otherwise start beating while still fading up. */
+.hero-logo {
+  animation: brand-heartbeat 1s cubic-bezier(.22, 1, .36, 1) .45s 2;
 }
 
 /* lub-dub: a strong beat, a smaller second one, then a rest before the next.
@@ -160,11 +148,11 @@ body:has(.map-layout) .site-header { position: static; }
    a throb.
 
    Deliberately transform-only. An earlier version also animated `filter:
-   drop-shadow(...)` for a glow, which worked in isolation but never repainted
-   inside the header — .site-header has `backdrop-filter`, and a filtered child
-   of a backdrop-filtered parent is a known compositing bug in WebKit and Blink.
-   Transforms composite on their own layer and are unaffected. Do not add a
-   filter here. */
+   drop-shadow(...)` for a glow, which never repainted when the header still had
+   a backdrop-filter — a filtered child of a backdrop-filtered parent is a known
+   compositing bug in WebKit and Blink. That backdrop-filter is gone now, but
+   transforms composite cleanly on their own layer, so keep this transform-only
+   rather than reintroducing the problem. */
 @keyframes brand-heartbeat {
   0%   { transform: scale(1); }
   10%  { transform: scale(1.24); }
@@ -181,12 +169,6 @@ body:has(.map-layout) .site-header { position: static; }
   width: auto;
   display: block;
   flex: none;
-  /* Force this image onto its own compositing layer. The header is
-     position:sticky with a backdrop-filter, which promotes it to a layer whose
-     children's repaints get suppressed — the heartbeat animation runs but never
-     draws. Promoting the logo itself makes it repaint independently. Without
-     this the animation is silently invisible in the header only. */
-  will-change: transform;
 }
 
 .hero-logo {

@@ -106,31 +106,7 @@ function setupHeaderShadow() {
   update();
 }
 
-/*
- * The hero logo beats three times when the homepage loads, then rests.
- *
- * The class is removed once the run finishes so that hovering afterwards starts
- * a fresh animation — re-applying the same animation-name to an element that
- * already finished it does nothing.
- */
-function setupHeroIntroBeat() {
-  if (PREFERS_REDUCED_MOTION) return;
-
-  const hero = document.querySelector('.hero-logo');
-  if (!hero) return; // only the homepage has one
-
-  hero.classList.add('intro-beat');
-
-  // animationend fires once, after all three iterations.
-  hero.addEventListener(
-    'animationend',
-    () => hero.classList.remove('intro-beat'),
-    { once: true }
-  );
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   setupReveal();
   setupHeaderShadow();
-  setupHeroIntroBeat();
 });
