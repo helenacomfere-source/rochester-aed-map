@@ -106,60 +106,7 @@ function setupHeaderShadow() {
   update();
 }
 
-/*
- * Clicking the logo from an inner page plays one heartbeat before navigating
- * home. Kept short on purpose: this is a wayfinding click on an emergency site,
- * so the delay has to read as a flourish, not as a slow page.
- *
- * Must match the animation duration in styles.css (.brand.beating .brand-logo).
- */
-const HEARTBEAT_MS = 700;
-
-function onHomePage() {
-  const path = window.location.pathname;
-  const file = path.slice(path.lastIndexOf('/') + 1);
-  return file === '' || file === 'index.html';
-}
-
-function setupBrandHeartbeat() {
-  // On the home page the logo goes nowhere, so there is nothing to animate
-  // toward. Reduced motion skips the effect and keeps the plain instant link.
-  if (PREFERS_REDUCED_MOTION || onHomePage()) return;
-
-  const brand = document.querySelector('.brand');
-  if (!brand) return;
-
-  const logo = brand.querySelector('.brand-logo');
-  if (!logo) return;
-
-  brand.addEventListener('click', (event) => {
-    // Anything that isn't a plain left-click belongs to the browser: open in a
-    // new tab, middle-click, right-click. Never delay or swallow those.
-    if (event.defaultPrevented || event.button !== 0) return;
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-
-    // Second click while the beat is running: give up and go immediately.
-    if (brand.classList.contains('beating')) return;
-
-    event.preventDefault();
-    brand.classList.add('beating');
-
-    let navigated = false;
-    const go = () => {
-      if (navigated) return;
-      navigated = true;
-      window.location.href = brand.href;
-    };
-
-    logo.addEventListener('animationend', go, { once: true });
-    // Backstop, in case animationend never fires (background tab, animation
-    // disabled by the browser). The visitor still gets home either way.
-    setTimeout(go, HEARTBEAT_MS + 150);
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   setupReveal();
   setupHeaderShadow();
-  setupBrandHeartbeat();
 });

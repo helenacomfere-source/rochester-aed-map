@@ -131,25 +131,25 @@ body:has(.map-layout) .site-header { position: static; }
 }
 .brand:hover .brand-sub { color: var(--red-dark); }
 
-.brand:hover .brand-logo { transform: scale(1.06); }
 .brand-logo { transition: transform .2s cubic-bezier(.16, 1, .3, 1); }
 
-/* Clicking the logo from an inner page plays one heartbeat before going home.
-   The `beating` class is added by reveal.js, which then waits for the animation
-   to finish. Timing here and HEARTBEAT_MS there describe the same beat — if you
-   change the duration below, change it there too. */
-.brand.beating .brand-logo {
-  animation: brand-heartbeat .7s cubic-bezier(.22, 1, .36, 1);
+/* Hovering the logo makes the heart beat, and keeps beating while you stay on
+   it. Pure decoration — nothing depends on it, and it stops the moment the
+   pointer leaves. */
+.brand:hover .brand-logo,
+.brand:focus-visible .brand-logo {
+  animation: brand-heartbeat 1.3s cubic-bezier(.22, 1, .36, 1) infinite;
 }
-.brand.beating { background: var(--red-tint); color: var(--red-dark); }
 
-/* lub-dub: a strong beat, a smaller second one, then rest. */
+/* lub-dub: a strong beat, a smaller second one, then a rest before the next.
+   The long tail from 58% to 100% is what makes it read as a pulse rather than
+   a throb. */
 @keyframes brand-heartbeat {
   0%   { transform: scale(1);    filter: none; }
-  14%  { transform: scale(1.28); filter: drop-shadow(0 0 6px rgba(200, 16, 46,.45)); }
-  28%  { transform: scale(1); }
-  42%  { transform: scale(1.16); filter: drop-shadow(0 0 4px rgba(200, 16, 46,.3)); }
-  58%  { transform: scale(1);    filter: none; }
+  10%  { transform: scale(1.22); filter: drop-shadow(0 0 6px rgba(200, 16, 46, .45)); }
+  20%  { transform: scale(1); }
+  30%  { transform: scale(1.13); filter: drop-shadow(0 0 4px rgba(200, 16, 46, .3)); }
+  42%  { transform: scale(1);    filter: none; }
   100% { transform: scale(1);    filter: none; }
 }
 /* logo.png has a transparent background (generated from the original JPEG by
