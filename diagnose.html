@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Heartbeat diagnostic</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; max-width: 720px; margin: 0 auto; }
+    .box { border: 1px solid #ccc; border-radius: 10px; padding: 1.25rem; margin: 1.25rem 0; }
+    .row { display: flex; justify-content: space-between; gap: 1rem; padding: .4rem 0; border-bottom: 1px solid #eee; font-size: .95rem; }
+    .row b { font-family: ui-monospace, monospace; }
+    .ok   { color: #1a7f4b; font-weight: 700; }
+    .bad  { color: #c8102e; font-weight: 700; }
+    .standalone {
+      width: 60px; height: 60px; background: #c8102e; border-radius: 8px;
+      animation: brand-heartbeat 1.3s cubic-bezier(.22,1,.36,1) infinite;
+    }
+  </style>
+</head>
+<body>
+  <h1>Heartbeat diagnostic</h1>
+  <p>Hover the logo below, then read the results. They update live.</p>
+
+  <div class="box">
+    <a class="brand" href="#" style="display:inline-flex">
+      <img class="brand-logo" src="assets/img/logo.png" alt="">
+      <span class="brand-text">
+        <span class="brand-name">Hover me</span>
+        <span class="brand-sub">the header logo lockup</span>
+      </span>
+    </a>
+  </div>
+
+  <div class="box">
+    <h2 style="margin-top:0;font-size:1rem">Live readings</h2>
+    <div class="row"><span>Reduce Motion is on</span><b id="rm">…</b></div>
+    <div class="row"><span>Stylesheet loaded</span><b id="css">…</b></div>
+    <div class="row"><span>@keyframes brand-heartbeat found</span><b id="kf">…</b></div>
+    <div class="row"><span>animation-name while hovering</span><b id="an">hover the logo</b></div>
+    <div class="row"><span>animation-duration while hovering</span><b id="ad">—</b></div>
+    <div class="row"><span>animation events actually firing</span><b id="ev">—</b></div>
+  </div>
+
+  <div class="box">
+    <h2 style="margin-top:0;font-size:1rem">Always-on control</h2>
+    <p>This red square runs the same animation with no hover involved. If it is
+       still, animation is blocked. If it pulses, the animation itself is fine.</p>
+    <div class="standalone"></div>
+  </div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const mark = (el, good, text) => { el.textContent = text; el.className = good ? 'ok' : 'bad'; };
+
+const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+mark($('rm'), !rm, rm ? 'YES — this blocks it' : 'no');
+
+const sheets = [...document.styleSheets].filter(s => (s.href || '').includes('styles.css'));
+mark($('css'), sheets.length > 0, sheets.length ? 'yes' : 'NO — stylesheet missing');
+
+let found = false;
+for (const s of document.styleSheets) {
+  try {
+    for (const r of s.cssRules) {
+      if (r.type === CSSRule.KEYFRAMES_RULE && r.name === 'brand-heartbeat') found = true;
+    }
+  } catch (e) { /* cross-origin sheet, skip */ }
+}
+mark($('kf'), found, found ? 'yes' : 'NO — keyframes missing');
+
+const logo = document.querySelector('.brand-logo');
+const brand = document.querySelector('.brand');
+
+brand.addEventListener('mouseenter', () => {
+  const cs = getComputedStyle(logo);
+  const name = cs.animationName;
+  mark($('an'), name === 'brand-heartbeat', name || 'none');
+  mark($('ad'), parseFloat(cs.animationDuration) > 0.1, cs.animationDuration);
+});
+
+let beats = 0;
+logo.addEventListener('animationiteration', () => {
+  beats++;
+  mark($('ev'), true, beats + ' beat(s) counted');
+});
+logo.addEventListener('animationstart', () => {
+  if (!beats) mark($('ev'), true, 'started');
+});
+</script>
+</body>
+</html>
