@@ -137,7 +137,8 @@ body:has(.map-layout) .site-header { position: static; }
    it. Pure decoration — nothing depends on it, and it stops the moment the
    pointer leaves. */
 .brand:hover .brand-logo,
-.brand:focus-visible .brand-logo {
+.brand:focus-visible .brand-logo,
+.hero-logo:hover {
   animation: brand-heartbeat 1.3s cubic-bezier(.22, 1, .36, 1) infinite;
 }
 
